@@ -13,81 +13,58 @@ const BookingForm: React.FC<BookingFormProps> = ({ onAdd }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!item.trim() || !amount) {
-      alert('請填寫完整項目與金額唷！');
-      return;
-    }
-
+    if (!item.trim() || !amount) return;
     const numAmount = parseInt(amount);
-    if (isNaN(numAmount)) {
-      alert('金額請填數字唷！');
-      return;
-    }
+    if (isNaN(numAmount)) return;
 
-    onAdd({
-      item: item.trim(),
-      amount: numAmount,
-      date,
-    });
-
-    // Reset fields
+    onAdd({ item: item.trim(), amount: numAmount, date });
     setItem('');
     setAmount('');
   };
 
   return (
-    <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 border-2 border-white">
+    <div className="bg-white rounded-[2rem] shadow-xl p-8 border-4 border-[#E9E4D9]">
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Item Input */}
         <div className="space-y-2">
-          <label className="text-2xl font-bold text-gray-600 flex items-center gap-2">
-            <span>📝</span> 項目
-          </label>
+          <label className="text-3xl font-bold text-[#5C634A] block mb-2">✏️ 買了什麼</label>
           <input
             type="text"
-            placeholder="例如：買菜、午餐..."
-            className="w-full p-4 rounded-xl border-2 border-gray-100 bg-gray-50 focus:bg-white text-2xl transition-all"
+            placeholder="例如：全聯買菜..."
+            className="w-full p-5 rounded-2xl border-4 border-[#F3F0E9] bg-[#F9F8F6] text-3xl focus:border-[#8E9775] outline-none transition-all placeholder:text-gray-300"
             value={item}
             onChange={(e) => setItem(e.target.value)}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Amount Input */}
           <div className="space-y-2">
-            <label className="text-2xl font-bold text-gray-600 flex items-center gap-2">
-              <span>💰</span> 金額
-            </label>
+            <label className="text-3xl font-bold text-[#5C634A] block mb-2">💰 多少錢</label>
             <input
               type="number"
               inputMode="numeric"
-              placeholder="金額"
-              className="w-full p-4 rounded-xl border-2 border-gray-100 bg-gray-50 focus:bg-white text-2xl transition-all"
+              placeholder="0"
+              className="w-full p-5 rounded-2xl border-4 border-[#F3F0E9] bg-[#F9F8F6] text-3xl focus:border-[#8E9775] outline-none transition-all"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
           </div>
-
-          {/* Date Input */}
           <div className="space-y-2">
-            <label className="text-2xl font-bold text-gray-600 flex items-center gap-2">
-              <span>📅</span> 日期
-            </label>
+            <label className="text-3xl font-bold text-[#5C634A] block mb-2">📅 哪一天</label>
             <input
               type="date"
-              className="w-full p-4 rounded-xl border-2 border-gray-100 bg-gray-50 focus:bg-white text-2xl transition-all"
+              className="w-full p-5 rounded-2xl border-4 border-[#F3F0E9] bg-[#F9F8F6] text-3xl focus:border-[#8E9775] outline-none transition-all"
               value={date}
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
         </div>
 
-        {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-[#4DB6AC] hover:bg-[#3FA096] active:scale-95 text-white font-bold py-5 rounded-2xl text-3xl shadow-md transition-all mt-4"
+          disabled={!item || !amount}
+          className="w-full bg-[#8E9775] hover:bg-[#7A8363] disabled:bg-gray-200 text-white font-black py-6 rounded-3xl text-4xl shadow-lg transition-all active:scale-95 mt-4"
         >
-          + 新增一筆
+          ＋ 記下來
         </button>
       </form>
     </div>

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { GroupedRecords, Record } from '../types';
+import { GroupedRecords } from '../types';
 
 interface ExpenseListProps {
   groupedRecords: GroupedRecords;
@@ -19,64 +19,54 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
 
   if (dates.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-400 space-y-4">
-        <span className="text-6xl block">📭</span>
-        <p className="text-2xl">目前還沒有紀錄喔，來記一筆吧！</p>
+      <div className="text-center py-20 text-[#D1CDC2] space-y-6">
+        <span className="text-9xl block opacity-50">🍵</span>
+        <p className="text-3xl font-bold">目前空空的，休息一下吧</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 space-y-8 border-2 border-white">
-      <div className="flex items-center gap-3 border-b-2 border-gray-50 pb-4">
-        <span className="text-3xl">📋</span>
-        <h2 className="text-3xl font-bold text-gray-700">花費清單</h2>
+    <div className="bg-white rounded-[2rem] shadow-xl p-8 border-4 border-[#E9E4D9]">
+      <div className="flex items-center gap-4 mb-10 border-b-4 border-[#F7F2E9] pb-6">
+        <span className="text-4xl">📜</span>
+        <h2 className="text-4xl font-black text-[#5C634A]">花費小本子</h2>
       </div>
 
-      <div className="space-y-10">
+      <div className="space-y-12">
         {dates.map((date) => {
           const dayRecords = groupedRecords[date];
           const dayTotal = dayRecords.reduce((sum, r) => sum + r.amount, 0);
           
           return (
-            <section key={date} className="space-y-4">
-              <div className="flex justify-between items-end border-b border-gray-100 pb-2">
+            <section key={date} className="relative">
+              <div className="flex justify-between items-center mb-6 bg-[#F7F2E9] p-4 rounded-2xl">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-600">{formatDate(date)}</h3>
-                  <p className="text-lg font-bold text-[#4DB6AC]">本日小計: ${dayTotal.toLocaleString()}</p>
+                  <h3 className="text-3xl font-black text-[#5C634A]">{formatDate(date)}</h3>
+                  <p className="text-2xl font-bold text-[#8E9775]">這天共花：${dayTotal.toLocaleString()}</p>
                 </div>
                 <button
                   onClick={() => onClearDate(date)}
-                  className="bg-[#FFCDD2] hover:bg-[#EF9A9A] text-[#C62828] text-sm font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
+                  className="bg-white hover:bg-red-50 text-red-400 text-xl font-bold px-4 py-2 rounded-xl shadow-sm border border-red-100 transition-colors"
                 >
-                  🗑️ 清除本日
+                  🗑️
                 </button>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {dayRecords.map((record) => (
                   <div 
                     key={record.id}
-                    className="flex justify-between items-center p-4 bg-[#FFF5F5] rounded-2xl group transition-all"
+                    className="flex justify-between items-center p-6 border-b-2 border-[#F9F8F6] last:border-0 hover:bg-[#FFFAF4] rounded-2xl transition-all"
                   >
-                    <span className="text-2xl font-medium text-gray-700">{record.item}</span>
-                    <div className="flex items-center gap-4">
-                      <span className="text-2xl font-bold text-[#4DB6AC]">${record.amount.toLocaleString()}</span>
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => onEdit(record.id)}
-                          className="p-2 hover:bg-white rounded-full transition-colors text-xl"
-                          title="修改"
-                        >
-                          ✏️
-                        </button>
-                        <button 
-                          onClick={() => onDelete(record.id)}
-                          className="p-2 hover:bg-white rounded-full transition-colors text-xl text-gray-400 hover:text-red-400"
-                          title="刪除"
-                        >
-                          ✕
-                        </button>
+                    <div className="flex flex-col">
+                      <span className="text-3xl font-bold text-[#4A4A4A]">{record.item}</span>
+                    </div>
+                    <div className="flex items-center gap-6">
+                      <span className="text-4xl font-black text-[#E28E8E]">${record.amount.toLocaleString()}</span>
+                      <div className="flex gap-3">
+                        <button onClick={() => onEdit(record.id)} className="text-3xl p-2 hover:bg-white rounded-lg">✏️</button>
+                        <button onClick={() => onDelete(record.id)} className="text-3xl p-2 hover:bg-white rounded-lg opacity-30 hover:opacity-100">✕</button>
                       </div>
                     </div>
                   </div>
@@ -90,10 +80,11 @@ const ExpenseList: React.FC<ExpenseListProps> = ({
   );
 };
 
-// Helper to format date into "YYYY年M月D日"
 function formatDate(dateStr: string) {
   const [year, month, day] = dateStr.split('-');
-  return `${year}年${parseInt(month)}月${parseInt(day)}日`;
+  const d = new Date(dateStr);
+  const weekDay = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
+  return `${parseInt(month)}月${parseInt(day)}日 (週${weekDay})`;
 }
 
 export default ExpenseList;

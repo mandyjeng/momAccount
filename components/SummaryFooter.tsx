@@ -11,21 +11,20 @@ const SummaryFooter: React.FC<SummaryFooterProps> = ({ total, onClearAll, show }
   if (!show) return null;
 
   return (
-    <div className="bg-white rounded-3xl shadow-xl p-6 border-t-4 border-[#FBCFE8]">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
-        <div className="flex items-center gap-4">
-          <span className="text-4xl">🧮</span>
-          <h2 className="text-3xl font-bold text-gray-700">
-            所有總計：
-            <span className="text-5xl text-[#E57373] ml-2">${total.toLocaleString()}</span>
+    <div className="bg-[#5C634A] rounded-[2.5rem] shadow-2xl p-10 text-white transform hover:scale-[1.02] transition-transform">
+      <div className="flex flex-col items-center gap-8">
+        <div className="text-center space-y-2">
+          <p className="text-3xl font-bold opacity-80">💰 累積花費總計 💰</p>
+          <h2 className="text-7xl font-black tracking-tighter">
+            ${total.toLocaleString()}
           </h2>
         </div>
         
         <button
           onClick={onClearAll}
-          className="bg-[#79716E] hover:bg-[#5D5755] active:scale-95 text-white font-bold px-8 py-4 rounded-2xl text-xl flex items-center gap-3 transition-all shadow-md"
+          className="w-full bg-[#E28E8E] hover:bg-[#D47D7D] text-white font-black py-5 rounded-2xl text-2xl flex items-center justify-center gap-3 shadow-inner transition-all"
         >
-          🗑️ 全部清除
+          🧹 清除小本子 (重來)
         </button>
       </div>
     </div>

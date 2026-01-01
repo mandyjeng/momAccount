@@ -5,31 +5,35 @@ import BookingForm from './components/BookingForm';
 import ExpenseList from './components/ExpenseList';
 import SummaryFooter from './components/SummaryFooter';
 
-const LOCAL_STORAGE_KEY = 'mom_ledger_data';
+const LOCAL_STORAGE_KEY = 'mom_ledger_data_v2';
 
 const App: React.FC = () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
-  // Load data from localStorage
   useEffect(() => {
     const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedData) {
       try {
         setRecords(JSON.parse(savedData));
       } catch (e) {
-        console.error("Failed to parse stored data", e);
+        console.error("解析失敗", e);
       }
     }
     setIsLoaded(true);
   }, []);
 
-  // Save data to localStorage whenever records change
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(records));
     }
   }, [records, isLoaded]);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2000);
+  };
 
   const addRecord = (newRecord: Omit<Record, 'id' | 'createdAt'>) => {
     const recordWithId: Record = {
@@ -38,11 +42,13 @@ const App: React.FC = () => {
       createdAt: Date.now(),
     };
     setRecords(prev => [recordWithId, ...prev]);
+    showToast('✅ 記好囉！');
   };
 
   const deleteRecord = (id: string) => {
-    if (window.confirm('確定要刪除這一筆嗎？')) {
+    if (window.confirm('確定要刪除這筆紀錄嗎？')) {
       setRecords(prev => prev.filter(r => r.id !== id));
+      showToast('🗑️ 已刪除');
     }
   };
 
@@ -50,50 +56,44 @@ const App: React.FC = () => {
     const record = records.find(r => r.id === id);
     if (!record) return;
 
-    const newItem = window.prompt('修改項目名稱：', record.item);
-    if (newItem === null) return;
+    const newItem = window.prompt('修改項目：', record.item);
+    if (newItem === null || newItem.trim() === '') return;
     
     const newAmountStr = window.prompt('修改金額：', record.amount.toString());
     if (newAmountStr === null) return;
     
     const newAmount = parseInt(newAmountStr);
-    if (isNaN(newAmount)) {
-      alert('請輸入有效的數字');
-      return;
-    }
+    if (isNaN(newAmount)) return alert('請輸入數字喔！');
 
     setRecords(prev => prev.map(r => 
-      r.id === id ? { ...r, item: newItem, amount: newAmount } : r
+      r.id === id ? { ...r, item: newItem.trim(), amount: newAmount } : r
     ));
+    showToast('✏️ 已修改完成');
   };
 
   const clearDate = (date: string) => {
-    if (window.confirm(`確定要清除 ${date} 的所有紀錄嗎？`)) {
+    if (window.confirm(`要清除 ${date} 的所有紀錄嗎？`)) {
       setRecords(prev => prev.filter(r => r.date !== date));
     }
   };
 
   const clearAll = () => {
-    if (window.confirm('確定要清除「全部」的紀錄嗎？這無法還原喔！')) {
+    if (window.confirm('警告：這會清除「所有」紀錄，確定嗎？')) {
       setRecords([]);
+      showToast('🧹 全部清空了');
     }
   };
 
-  // Grouping logic
   const groupedRecords = useMemo(() => {
     const groups: GroupedRecords = {};
-    const sortedRecords = [...records].sort((a, b) => {
-      // Sort by date descending
+    const sorted = [...records].sort((a, b) => {
       if (b.date !== a.date) return b.date.localeCompare(a.date);
-      // If same date, sort by creation time descending
       return b.createdAt - a.createdAt;
     });
 
-    sortedRecords.forEach(record => {
-      if (!groups[record.date]) {
-        groups[record.date] = [];
-      }
-      groups[record.date].push(record);
+    sorted.forEach(r => {
+      if (!groups[r.date]) groups[r.date] = [];
+      groups[r.date].push(r);
     });
     return groups;
   }, [records]);
@@ -103,19 +103,23 @@ const App: React.FC = () => {
   }, [records]);
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto flex flex-col gap-8">
-      {/* Header Section */}
-      <header className="text-center space-y-2">
-        <h1 className="text-5xl font-bold text-gray-700 flex items-center justify-center gap-4">
-          小媽的小帳本 <span className="text-4xl">📓</span>
+    <div className="min-h-screen py-10 px-4 max-w-2xl mx-auto flex flex-col gap-8 relative">
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 bg-[#8E9775] text-white px-8 py-3 rounded-full shadow-2xl text-2xl font-bold animate-bounce">
+          {toast}
+        </div>
+      )}
+
+      <header className="text-center space-y-3">
+        <h1 className="text-6xl font-black text-[#5C634A] tracking-wider">
+          小媽小帳本 <span className="text-5xl">🌿</span>
         </h1>
-        <p className="text-xl text-gray-500 font-medium">金魚腦救星</p>
+        <p className="text-2xl text-[#8E9775] font-bold">金魚腦今天花了什麼呢？</p>
       </header>
 
-      {/* Main Form Card */}
       <BookingForm onAdd={addRecord} />
 
-      {/* List Section */}
       <main className="flex-grow">
         <ExpenseList 
           groupedRecords={groupedRecords} 
@@ -125,12 +129,15 @@ const App: React.FC = () => {
         />
       </main>
 
-      {/* Summary Footer */}
       <SummaryFooter 
         total={totalAmount} 
         onClearAll={clearAll} 
         show={records.length > 0} 
       />
+      
+      <footer className="text-center text-[#D1CDC2] text-sm py-4">
+        Made for Mom with Love ❤️
+      </footer>
     </div>
   );
 };

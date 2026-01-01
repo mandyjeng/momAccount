@@ -4,39 +4,50 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>小媽的小帳本 📓 金魚腦救星</title>
+    <title>小媽的小帳本 📓 日系簡約版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+      :root {
+        --bg-color: #F7F2E9; /* 日式米色 */
+        --primary-green: #8E9775;
+        --soft-pink: #E28E8E;
+        --text-dark: #4A4A4A;
+      }
       body {
         font-family: 'Noto Sans TC', sans-serif;
-        background-color: #FEF6F6; /* Soft Japanese Pink Background */
+        background-color: var(--bg-color);
+        color: var(--text-dark);
+        font-size: 1.25rem; /* 20px base */
       }
+      /* 針對長輩調整輸入框點擊範圍 */
       input, button {
-        font-size: 1.25rem !important; /* Global large font for accessibility */
+        min-height: 3.5rem;
       }
-      ::placeholder {
-        color: #A0AEC0;
+      /* 自定義捲軸，讓畫面更清爽 */
+      ::-webkit-scrollbar {
+        width: 8px;
       }
-      /* Custom focus styles for better visibility */
-      input:focus {
-        outline: 3px solid #4DB6AC;
-        outline-offset: 1px;
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #D1CDC2;
+        border-radius: 10px;
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
-  }
-}
-</script>
-</head>
+    <script type="importmap">
+    {
+      "imports": {
+        "react/": "https://esm.sh/react@^19.2.3/",
+        "react": "https://esm.sh/react@^19.2.3",
+        "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+        "react-dom": "https://esm.sh/react-dom@^19.2.3"
+      }
+    }
+    </script>
+  </head>
   <body>
     <div id="root"></div>
   </body>
-  
-  <script type="module" src="./index.tsx"></script>
 </html>
